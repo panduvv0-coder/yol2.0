@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Anti Gravity CLI · Termux &amp; Linux Learning Toolkit</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+
+  <!-- SEO & Social Meta -->
+  <meta name="description" content="Anti Gravity CLI — A modern Termux &amp; Linux learning toolkit to master command line fundamentals.">
+  <meta property="og:title" content="Anti Gravity CLI · Termux &amp; Linux Learning Toolkit">
+  <meta property="og:description" content="Master Linux basics, file systems, permissions, and terminal tools without the weight.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/panduvv0-coder/yol">
+  <!-- TODO: upload og-image.png (1200x630) to repo main branch -->
+  <meta property="og:image" content="https://raw.githubusercontent.com/panduvv0-coder/yol/main/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Anti Gravity CLI · Termux &amp; Linux Learning Toolkit">
+  <meta name="twitter:description" content="Master Linux basics, file systems, permissions, and terminal tools without the weight.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/panduvv0-coder/yol/main/og-image.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ----- DESIGN TOKENS ----- */
+    :root {
+      --accent: #4f8eff;
+      --accent-hover: #3b76e0;
+      --accent-soft: rgba(79, 142, 255, 0.25);
+      --accent-glow: rgba(79, 142, 255, 0.15);
+      --accent-text: #8ab4ff;
+
+      --bg-deep: #030611;
+      --bg-mid: #0c1222;
+      --bg-card: rgba(13, 22, 41, 0.65);
+      --bg-panel: rgba(15, 23, 42, 0.5);
+      --bg-terminal: #060913;
+      --bg-lesson: rgba(6, 11, 22, 0.8);
+
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(79, 142, 255, 0.25);
+
+      --text-bright: #f1f5f9;
+      --text-base: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #859bb8;
+      --text-code: #38bdf8;
+
+      --radius-card: 2rem;
+      --radius-panel: 1.25rem;
+      --radius-pill: 100px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-deep: #eef2f9;
+        --bg-mid: #ffffff;
+        --bg-card: rgba(255, 255, 255, 0.75);
+        --bg-panel: rgba(240, 244, 252, 0.7);
+        --bg-terminal: #060913;
+        --bg-lesson: rgba(6, 11, 22, 0.8);
+
+        --border-soft: rgba(0, 0, 0, 0.08);
+        --border-accent: rgba(79, 142, 255, 0.35);
+
+        --text-bright: #0b1220;
+        --text-base: #1e293b;
+        --text-muted: #475569;
+        --text-dim: #475569;
+      }
+    }
+
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, var(--bg-mid), var(--bg-deep));
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-base);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* ----- CARD ----- */
+    .gravity-card {
+      max-width: 880px;
+      width: 100%;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-accent);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7),
+                  0 0 30px var(--accent-glow);
+      padding: 2.5rem 2rem;
+      animation: floatOnce 1.2s ease-out forwards;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gravity-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-accent);
+      box-shadow: 0 35px 70px -10px rgba(0, 0, 0, 0.8),
+                  0 0 35px var(--accent-glow);
+    }
+
+    @keyframes floatOnce {
+      0%   { transform: translateY(20px); opacity: 0; }
+      50%  { transform: translateY(-8px); opacity: 1; }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* ----- HEADER ----- */
+    .header-badge {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .title-group i {
+      font-size: 2.2rem;
+      color: var(--accent);
+      filter: drop-shadow(0 0 10px var(--accent-glow));
+    }
+
+    .title-group h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-bright), var(--accent-text));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .badge {
+      background: var(--accent-glow);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-text);
+      border-radius: var(--radius-pill);
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: lowercase;
+    }
+
+    /* ----- SHIELDS ----- */
+    .shields-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .shields-row img { height: 20px; border-radius: 3px; }
+
+    /* ----- TAGLINE ----- */
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    /* ----- REPO BANNER ----- */
+    .repo-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-panel);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .repo-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .repo-info i { font-size: 1.5rem; color: var(--accent); }
+
+    .btn-group { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    .btn-primary,
+    .btn-secondary {
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 6px 20px var(--accent-soft);
+    }
+
+    .btn-primary:active { transform: scale(0.95); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent-text);
+      border: 1px solid var(--border-accent);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-glow);
+    }
+
+    .btn-secondary:active { transform: scale(0.95); }
+
+    /* ----- DEMO ----- */
+    .demo-container {
+      margin-bottom: 2rem;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border-accent);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      background: var(--bg-terminal);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .demo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Branded placeholder when demo.gif is missing */
+    .demo-placeholder {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .demo-placeholder i {
+      font-size: 3rem;
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    /* ----- LESSON ----- */
+    .lesson-box {
+      background: var(--bg-lesson);
+      border: 1px solid var(--border-accent);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .lesson-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-text);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lesson-terminal {
+      background: #03060d;
+      border-radius: 0.5rem;
+      padding: 0.85rem 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin-bottom: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .lesson-terminal .cmd { color: var(--text-code); font-weight: bold; }
+    .lesson-terminal .output { color: #94a3b8; }
+
+    .lesson-explanation {
+      font-size: 0.88rem;
+      color: var(--text-bright);
+      line-height: 1.55;
+    }
+
+    @media (prefers-color-scheme: light) {
+      .lesson-explanation {
+        color: #e2e8f0;
+      }
+    }
+
+    .lesson-explanation code {
+      font-family: 'Courier New', Courier, monospace;
+      background: var(--accent-glow);
+      color: var(--accent-text);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85em;
+      border: 1px solid var(--border-accent);
+    }
+
+    /* ----- FEATURE GRID ----- */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-panel);
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .feature-card h3 i { color: var(--accent); }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .feature-list li {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .feature-list li i {
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    /* ----- TERMINAL BOX + COPY ----- */
+    .terminal-box {
+      background: var(--bg-terminal);
+      border: 1px solid var(--border-soft);
+      border-left: 4px solid var(--accent);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      color: var(--text-code);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .terminal-box > i.fa-terminal { color: var(--accent); }
+
+    .terminal-text { color: #e2e8f0; }
+    .terminal-comment { color: #64748b; }
+
+    .copy-btn {
+      margin-left: auto;
+      background: var(--accent-glow);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-text);
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.75rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover { background: var(--accent-soft); }
+    .copy-btn:active { transform: scale(0.95); }
+    .copy-btn.copied { color: #4ade80; border-color: rgba(74, 222, 128, 0.5); }
+
+    /* ----- FOOTER ----- */
+    .footer {
+      border-top: 1px solid var(--border-soft);
+      padding-top: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* ----- RESPONSIVE ----- */
+    @media (max-width: 640px) {
+      .feature-grid { grid-template-columns: 1fr; }
+      .gravity-card { padding: 1.75rem 1.25rem; }
+      .repo-banner { flex-direction: column; align-items: stretch; }
+      .btn-group { flex-direction: column; }
+      .btn-primary, .btn-secondary { justify-content: center; }
+    }
+
+    /* ----- REDUCED MOTION ----- */
+    @media (prefers-reduced-motion: reduce) {
+      .gravity-card { animation: none; }
+      .gravity-card:hover, .feature-card:hover { transform: none; }
+      .gravity-card, .btn-primary, .btn-secondary, .copy-btn, .feature-card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="gravity-card">
+    <!-- Header -->
+    <header class="header-badge">
+      <div class="title-group">
+        <i class="fa-solid fa-atom" aria-hidden="true"></i>
+        <h1>Anti Gravity CLI</h1>
+      </div>
+      <div class="badge">
+        <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+        termux · linux
+      </div>
+    </header>
+
+    <!-- Shields -->
+    <div class="shields-row">
+      <a href="https://github.com/panduvv0-coder/yol/stargazers" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/github/stars/panduvv0-coder/yol?style=flat-square&amp;color=4f8eff&amp;labelColor=0d1629" alt="GitHub Stars">
+      </a>
+      <a href="https://github.com/panduvv0-coder/yol/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/github/license/panduvv0-coder/yol?style=flat-square&amp;color=4f8eff&amp;labelColor=0d1629" alt="MIT License">
+      </a>
+    </div>
+
+    <!-- Tagline -->
+    <p class="tagline">
+      Master Linux basics, file systems, and command line tools without the weight.
+    </p>
+
+    <!-- Repo Banner -->
+    <div class="repo-banner">
+      <div class="repo-info">
+        <i class="fa-brands fa-github" aria-hidden="true"></i>
+        <span>panduvv0-coder / yol</span>
+      </div>
+      <div class="btn-group">
+        <a href="https://github.com/panduvv0-coder/yol" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          View Repository
+        </a>
+        <a href="https://github.com/panduvv0-coder/yol#readme" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <i class="fa-solid fa-book" aria-hidden="true"></i>
+          Read the Docs
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo -->
+    <div class="demo-container">
+      <img
+        id="demoImg"
+        src="https://raw.githubusercontent.com/panduvv0-coder/yol/main/demo.gif"
+        alt="Anti Gravity CLI toolkit demo"
+        loading="lazy">
+      <div class="demo-placeholder" id="demoPlaceholder">
+        <i class="fa-solid fa-image" aria-hidden="true"></i>
+        <span>Demo coming soon —<br>clone the repo to try it live.</span>
+      </div>
+    </div>
+
+    <!-- Lesson -->
+    <div class="lesson-box">
+      <div class="lesson-title">
+        <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+        Interactive Lesson Example: Inspecting File Permissions
+      </div>
+      <div class="lesson-terminal">
+        <div><span class="cmd">$ ls -l $PREFIX/bin/python</span></div>
+        <div class="output">-rwxr-xr-x 1 u0_a210 u0_a210 14328 Sep 15 10:42 python</div>
+      </div>
+      <div class="lesson-explanation">
+        <strong>Lesson breakdown:</strong> The <code>-rwxr-xr-x</code> string indicates permission flags (Read, Write, Execute). The owner (<code>u0_a210</code>) has full execution access, while group and public users have read and execute rights without write privileges.
+      </div>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Core Basics</h3>
+        <ul class="feature-list">
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Linux Fundamentals &amp; Architecture</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Terminal Navigation (cd, ls, pwd)</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Environment Variables &amp; Shell Basics</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3><i class="fa-solid fa-folder-tree" aria-hidden="true"></i> File &amp; Storage</h3>
+        <ul class="feature-list">
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Linux File System Hierarchy</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> File Operations (cp, mv, rm, mkdir)</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Storage &amp; Disk Commands</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3><i class="fa-solid fa-sliders" aria-hidden="true"></i> Permissions &amp; Users</h3>
+        <ul class="feature-list">
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> User &amp; Group Management</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> File Permissions (chmod, chown)</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Sudo &amp; Root Privileges</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3><i class="fa-solid fa-cubes" aria-hidden="true"></i> Utilities &amp; Packages</h3>
+        <ul class="feature-list">
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Text Processing (grep, sed, awk)</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Package Managers (pkg, apt)</li>
+          <li><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Process Management (ps, top, kill)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Terminal + Copy -->
+    <div class="terminal-box">
+      <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+      <span class="terminal-text" id="cloneCmd">git clone https://github.com/panduvv0-coder/yol.git</span>
+      <span class="terminal-comment"># Clone toolkit</span>
+      <button class="copy-btn" type="button" id="copyBtn" aria-label="Copy clone command">
+        <i class="fa-solid fa-copy" aria-hidden="true"></i>
+        <span>Copy</span>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> MIT License</span>
+      <span>Anti Gravity CLI · <span id="year"></span></span>
+    </footer>
+  </main>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Copy button
+    const copyBtn = document.getElementById('copyBtn');
+    const cloneCmd = document.getElementById('cloneCmd');
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(cloneCmd.textContent);
+        copyBtn.classList.add('copied');
+        copyBtn.querySelector('span').textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.querySelector('span').textContent = 'Copy';
+        }, 1600);
+      } catch {
+        copyBtn.querySelector('span').textContent = 'Failed';
+      }
+    });
+
+    // Demo image error fallback
+    const demoImg = document.getElementById('demoImg');
+    const demoPlaceholder = document.getElementById('demoPlaceholder');
+    demoImg.addEventListener('error', () => {
+      demoImg.style.display = 'none';
+      demoPlaceholder.style.display = 'flex';
+    });
+  </script>
+</body>
+</html>
